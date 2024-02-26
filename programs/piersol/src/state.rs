@@ -9,7 +9,10 @@ pub enum SwapState {
 }
 
 pub const BOOK_SEED: &str = "book";
+pub const ESCROW_SEED: &str = "escrow";
 pub const BOOK_SIZE: usize = 8 + (4 * 32) + (2 * 8) + (3 * 1);
+pub const CONFIG_SEED: &str = "config";
+pub const CONFIG_SIZE: usize = 8 + 8 + 1;
 
 #[account]
 pub struct Book {
@@ -26,11 +29,12 @@ pub struct Book {
 
 #[account]
 pub struct Fee {
+    pub creator: Pubkey,
     pub wallet: Pubkey,
-    pub owner: Pubkey,
 }
 
 #[account]
 pub struct Config {
     pub last_offered_id: u64,
+    pub bump: u8,
 }

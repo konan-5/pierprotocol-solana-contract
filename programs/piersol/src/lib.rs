@@ -10,10 +10,7 @@ declare_id!("BFyTZKQiRPnk8AkBEfD1mhm5ZGuq46GWXg5wbFAYPzPx");
 pub mod piersol {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        Ok(())
+    pub fn initialize_book(ctx: Context<InitializeBookPdaCtx>) -> Result<()> {
+        initialize_pdas::initialize_book_handler(ctx)
     }
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}
