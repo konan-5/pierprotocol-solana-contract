@@ -25,6 +25,7 @@ pub struct Book {
     pub state: u8,
     pub book_bump: u8,
     pub escrow_bump: u8,
+    pub id: u64,
 }
 
 #[account]

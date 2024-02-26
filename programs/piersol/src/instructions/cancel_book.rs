@@ -12,12 +12,6 @@ pub struct CancelBookCtx<'info> {
     offered_mint: Account<'info, Mint>,
 
     #[account(
-        seeds = [CONFIG_SEED.as_bytes()],
-        bump = config.bump,
-    )]
-    config: Account<'info, Config>,
-
-    #[account(
         mut,
         constraint = creator_ata_offered.owner == creator.key(),
         constraint = creator_ata_offered.mint == offered_mint.key(),
@@ -26,7 +20,7 @@ pub struct CancelBookCtx<'info> {
 
     #[account(
         mut,
-        seeds = [BOOK_SEED.as_bytes(), &config.last_offered_id.to_le_bytes()],
+        seeds = [BOOK_SEED.as_bytes(), &book.id.to_le_bytes()],
         bump = book.book_bump,
         constraint = book.creator == creator.key(),
         constraint = book.offered_mint == offered_mint.key(),
@@ -37,7 +31,7 @@ pub struct CancelBookCtx<'info> {
 
     #[account(
         mut,
-        seeds = [ESCROW_SEED.as_bytes(), &config.last_offered_id.to_le_bytes()],
+        seeds = [ESCROW_SEED.as_bytes(), &book.id.to_le_bytes()],
         bump = book.escrow_bump,
         constraint = escrow.owner == book.key(),
         constraint = escrow.mint == offered_mint.key()
@@ -53,13 +47,12 @@ pub fn cancel_book_handler(
     let book = &mut ctx.accounts.book;
     book.state = BookState::Cancelled as u8;
 
-    let config = &ctx.accounts.config;
-    let last_offered_id_bytes = config.last_offered_id.to_le_bytes();
+    let book_id_bytes = book.id.to_le_bytes();
 
     let bump_vector = &[book.book_bump][..];
     let inner = vec![
         BOOK_SEED.as_bytes(),
-        &last_offered_id_bytes,
+        &book_id_bytes,
         bump_vector.as_ref(),
     ];
 

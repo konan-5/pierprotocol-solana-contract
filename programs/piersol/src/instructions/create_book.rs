@@ -21,14 +21,7 @@ pub struct CreateBookCtx<'info> {
 
     #[account(
         mut,
-        seeds = [CONFIG_SEED.as_bytes()],
-        bump = config.bump,
-    )]
-    config: Account<'info, Config>,
-
-    #[account(
-        mut,
-        seeds = [BOOK_SEED.as_bytes(), &config.last_offered_id.to_le_bytes()],
+        seeds = [BOOK_SEED.as_bytes(), &book.id.to_le_bytes()],
         bump = book.book_bump,
         constraint = book.escrow == escrow.key(),
         constraint = book.state != BookState::Created as u8 @ ErrorCode::InvalidBookState,
@@ -37,7 +30,7 @@ pub struct CreateBookCtx<'info> {
 
     #[account(
         mut,
-        seeds = [ESCROW_SEED.as_bytes(), &config.last_offered_id.to_le_bytes()],
+        seeds = [ESCROW_SEED.as_bytes(), &book.id.to_le_bytes()],
         bump = book.escrow_bump,
     )]
     escrow: Account<'info, TokenAccount>,

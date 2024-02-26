@@ -35,6 +35,7 @@ pub struct InitializeBookPdaCtx<'info> {
     creator: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [CONFIG_SEED.as_bytes()],
         bump = config.bump,
     )]
@@ -53,8 +54,13 @@ pub struct InitializeBookPdaCtx<'info> {
 }
 
 pub fn initialize_book_handler(ctx: Context<InitializeBookPdaCtx>) -> Result<()> {
+    let config = &mut ctx.accounts.config;
+
     let book = &mut ctx.accounts.book;
     book.book_bump = *ctx.bumps.get(BOOK_SEED).unwrap();
+    book.id = config.last_offered_id;
+
+    config.last_offered_id += 1;
     Ok(())
 }
 
@@ -66,14 +72,8 @@ pub struct InitializeEscrowPdaCtx<'info> {
     offered_mint: Account<'info, Mint>,
 
     #[account(
-        seeds = [CONFIG_SEED.as_bytes()],
-        bump = config.bump,
-    )]
-    config: Account<'info, Config>,
-
-    #[account(
         mut,
-        seeds = [BOOK_SEED.as_bytes(), &config.last_offered_id.to_le_bytes()],
+        seeds = [BOOK_SEED.as_bytes(), &book.id.to_le_bytes()],
         bump = book.book_bump,
     )]
     book: Account<'info, Book>,
@@ -81,7 +81,7 @@ pub struct InitializeEscrowPdaCtx<'info> {
     #[account(
         init,
         payer = creator,
-        seeds = [ESCROW_SEED.as_bytes(), &config.last_offered_id.to_le_bytes()],
+        seeds = [ESCROW_SEED.as_bytes(), &book.id.to_le_bytes()],
         bump,
         token::mint = offered_mint,
         token::authority = book,
