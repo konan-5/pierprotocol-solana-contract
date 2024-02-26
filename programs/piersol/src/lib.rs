@@ -21,4 +21,16 @@ pub mod piersol {
     pub fn initialize_escrow(ctx: Context<InitializeEscrowPdaCtx>) -> Result<()> {
         initialize_pdas:: initialize_escrow_handler(ctx)
     }
+
+    pub fn create_book(ctx: Context<CreateBookCtx>, offered_amount: u64, desired_amount: u64) -> Result<()> {
+        create_book::create_book_handler(ctx, offered_amount, desired_amount)
+    }
+
+    pub fn close_book(ctx: Context<CloseBookCtx>) -> Result<()> {
+        close_book::close_book_handler(ctx)
+    }
+
+    pub fn cancel_book(ctx: Context<CancelBookCtx>) -> Result<()> {
+        cancel_book::cancel_book_handler(ctx)
+    }
 }
