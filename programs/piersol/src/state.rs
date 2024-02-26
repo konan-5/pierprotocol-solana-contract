@@ -12,9 +12,11 @@ pub const BOOK_SEED: &str = "book";
 pub const ESCROW_SEED: &str = "escrow";
 pub const CONFIG_SEED: &str = "config";
 pub const FEE_SEED: &str = "fee";
+pub const FRIEND_SEED: &str = "friend";
 pub const FEE_SIZE: usize = 8 + 2 * 32;
 pub const BOOK_SIZE: usize = 8 + (4 * 32) + (2 * 8) + (3 * 1);
 pub const CONFIG_SIZE: usize = 8 + 8 + 1;
+pub const FRIEND_SIZE: usize = 8 + 32 + 1;
 
 #[account]
 pub struct Book {
@@ -38,6 +40,12 @@ pub struct Fee {
 
 #[account]
 pub struct Config {
+    pub creator: Pubkey,
     pub last_offered_id: u64,
     pub bump: u8,
+}
+
+#[account]
+pub struct Friend {
+    pub fee_rate: u8,
 }

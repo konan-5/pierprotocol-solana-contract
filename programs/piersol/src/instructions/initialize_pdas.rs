@@ -25,6 +25,7 @@ pub struct InitializeConfigPdaCtx<'info> {
 pub fn initialize_config_handler(ctx: Context<InitializeConfigPdaCtx>) -> Result<()> {
     let config = &mut ctx.accounts.config;
     config.last_offered_id = 0;
+    config.creator = ctx.accounts.creator.key();
     config.bump = *ctx.bumps.get(CONFIG_SEED).unwrap();
     Ok(())
 }
@@ -121,5 +122,37 @@ pub fn initialize_fee_handler(ctx: Context<InitializeFeePdaCtx>, fee_wallet: Pub
     let fee = &mut ctx.accounts.fee;
     fee.creator = ctx.accounts.creator.key();
     fee.wallet = fee_wallet;
+    Ok(())
+}
+
+#[derive(Accounts)]
+pub struct InitializeFriendPdaCtx<'info> {
+    #[account(mut)]
+    creator: Signer<'info>,
+
+    friend_mint: Account<'info, Mint>,
+
+    #[account(
+        seeds = [CONFIG_SEED.as_bytes()],
+        bump = config.bump,
+    )]
+    config: Account<'info, Config>,
+
+    #[account(
+        init,
+        payer = creator,
+        seeds = [FRIEND_SEED.as_bytes(), friend_mint.key().as_ref()],
+        bump,
+        constraint = config.creator == creator.key(),
+        space = FRIEND_SIZE
+    )]
+    friend: Account<'info, Friend>,
+
+    system_program: Program<'info, System>,
+}
+
+pub fn initialize_friend_handler(ctx: Context<InitializeFriendPdaCtx>, fee_rate: u8) -> Result<()> {
+    let friend = &mut ctx.accounts.friend;
+    friend.fee_rate = fee_rate;
     Ok(())
 }
