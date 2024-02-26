@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 #[derive(Clone, Debug, PartialEq, Eq, AnchorSerialize, AnchorDeserialize)]
 #[repr(u8)]
-pub enum SwapState {
+pub enum BookState {
     Created = 1,
     Closed = 2,
     Cancelled = 3,

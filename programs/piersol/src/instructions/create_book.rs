@@ -31,7 +31,7 @@ pub struct CreateBookCtx<'info> {
         seeds = [BOOK_SEED.as_bytes(), &config.last_offered_id.to_le_bytes()],
         bump = book.book_bump,
         constraint = book.escrow == escrow.key(),
-        constraint = book.state != SwapState::Created as u8 @ ErrorCode::InvalidSwapState,
+        constraint = book.state != BookState::Created as u8 @ ErrorCode::InvalidBookState,
     )]
     book: Account<'info, Book>,
 
@@ -52,7 +52,7 @@ pub fn create_book_handler(ctx: Context<CreateBookCtx>, offered_amount: u64, des
     book.desired_mint = ctx.accounts.desired_mint.key();
     book.offered_amount = offered_amount;
     book.desired_amount = desired_amount;
-    book.state = SwapState::Created as u8;
+    book.state = BookState::Created as u8;
 
     let transfer_instruction = Transfer{
         from: ctx.accounts.creator_ata_offered.to_account_info(),
