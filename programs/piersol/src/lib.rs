@@ -14,6 +14,10 @@ pub mod piersol {
         initialize_pdas::initialize_config_handler(ctx)
     }
 
+    pub fn initialize_fee_account(ctx: Context<InitializeFeePdaCtx>, fee_wallet: Pubkey) -> Result<()> {
+        initialize_pdas:: initialize_fee_handler(ctx, fee_wallet)
+    }
+
     pub fn initialize_book(ctx: Context<InitializeBookPdaCtx>) -> Result<()> {
         initialize_pdas::initialize_book_handler(ctx)
     }

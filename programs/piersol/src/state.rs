@@ -10,8 +10,10 @@ pub enum BookState {
 
 pub const BOOK_SEED: &str = "book";
 pub const ESCROW_SEED: &str = "escrow";
-pub const BOOK_SIZE: usize = 8 + (4 * 32) + (2 * 8) + (3 * 1);
 pub const CONFIG_SEED: &str = "config";
+pub const FEE_SEED: &str = "fee";
+pub const FEE_SIZE: usize = 8 + 2 * 32;
+pub const BOOK_SIZE: usize = 8 + (4 * 32) + (2 * 8) + (3 * 1);
 pub const CONFIG_SIZE: usize = 8 + 8 + 1;
 
 #[account]

@@ -99,3 +99,27 @@ pub fn initialize_escrow_handler(ctx: Context<InitializeEscrowPdaCtx>) -> Result
     book.escrow_bump = *ctx.bumps.get(ESCROW_SEED).unwrap();
     Ok(())
 }
+
+#[derive(Accounts)]
+pub struct InitializeFeePdaCtx<'info> {
+    #[account(mut)]
+    creator: Signer<'info>,
+
+    #[account(
+        init,
+        payer = creator,
+        seeds = [FEE_SEED.as_bytes()],
+        bump,
+        space = FEE_SIZE,
+    )]
+    fee: Account<'info, Fee>,
+
+    system_program: Program<'info, System>,
+}
+
+pub fn initialize_fee_handler(ctx: Context<InitializeFeePdaCtx>, fee_wallet: Pubkey) -> Result<()> {
+    let fee = &mut ctx.accounts.fee;
+    fee.creator = ctx.accounts.creator.key();
+    fee.wallet = fee_wallet;
+    Ok(())
+}
