@@ -16,7 +16,7 @@ pub const FRIEND_SEED: &str = "friend";
 pub const FEE_SIZE: usize = 8 + 2 * 32;
 pub const BOOK_SIZE: usize = 8 + (4 * 32) + (2 * 8) + (3 * 1);
 pub const CONFIG_SIZE: usize = 8 + 8 + 1;
-pub const FRIEND_SIZE: usize = 8 + 32 + 1;
+pub const FRIEND_SIZE: usize = 8 + 32 + 2 * 1;
 
 #[account]
 pub struct Book {
@@ -48,4 +48,5 @@ pub struct Config {
 #[account]
 pub struct Friend {
     pub fee_rate: u8,
+    pub bump: u8,
 }
