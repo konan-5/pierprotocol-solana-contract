@@ -12,6 +12,8 @@ pub struct UpdateFeeCtx<'info> {
     #[account(
         mut,
         has_one = creator,
+        seeds=[FEE_SEED.as_bytes()],
+        bump=fee.bump,
     )]
     pub fee: Account<'info, Fee>
 }

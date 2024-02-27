@@ -122,6 +122,7 @@ pub fn initialize_fee_handler(ctx: Context<InitializeFeePdaCtx>, fee_wallet: Pub
     let fee = &mut ctx.accounts.fee;
     fee.creator = ctx.accounts.creator.key();
     fee.wallet = fee_wallet;
+    fee.bump = *ctx.bumps.get(FEE_SEED).unwrap();
     Ok(())
 }
 

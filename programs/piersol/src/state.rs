@@ -36,6 +36,7 @@ pub struct Book {
 pub struct Fee {
     pub creator: Pubkey,
     pub wallet: Pubkey,
+    pub bump: u8,
 }
 
 #[account]

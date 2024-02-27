@@ -17,6 +17,30 @@ pub struct CloseBookCtx<'info> {
     desired_mint: Account<'info, Mint>,
 
     #[account(
+        seeds = [FEE_SEED.as_bytes()],
+        bump = fee.bump
+    )]
+    fee: Account<'info, Fee>,
+
+    #[account(
+        seeds = [FRIEND_SEED.as_bytes(), offered_mint.key().as_ref()],
+        bump = offered_friend.bump
+    )]
+    offered_friend: Account<'info, Friend>,
+
+    #[account(
+        mut,
+        seeds = [FRIEND_SEED.as_bytes(), desired_mint.key().as_ref()],
+        bump = desired_friend.bump
+    )]
+    desired_friend: Account<'info, Friend>,
+
+    #[account(
+        constraint=fee_ata.owner == fee.wallet,
+    )]
+    fee_ata: Account<'info, TokenAccount>,
+
+    #[account(
         mut,
         constraint=creator_ata_offered.owner == creator.key(),
         constraint=creator_ata_offered.mint == offered_mint.key()
@@ -71,6 +95,11 @@ pub struct CloseBookCtx<'info> {
 pub fn close_book_handler(
     ctx: Context<CloseBookCtx>
 ) -> Result<()> {
+    let offered_friend = &ctx.accounts.offered_friend;
+    let desired_friend = &ctx.accounts.desired_friend;
+
+    let fee_ata = &ctx.accounts.fee_ata;
+
     let book = &mut ctx.accounts.book;
     book.state = BookState::Closed as u8;
     let book_id_bytes = book.id.to_le_bytes();
@@ -115,6 +144,21 @@ pub fn close_book_handler(
         anchor_spl::token::close_account(cpi_ctx)?;
     }
 
+    let fee_amount: u64 = book.desired_amount * (desired_friend.fee_rate + offered_friend.fee_rate ) as u64 / 100;
+
+    let transfer_instruction = Transfer{
+        from: ctx.accounts.taker_ata_desired.to_account_info(),
+        to: fee_ata.to_account_info(),
+        authority: ctx.accounts.taker.to_account_info(),
+    };
+
+    let cpi_ctx = CpiContext::new(
+        ctx.accounts.token_program.to_account_info(),
+        transfer_instruction
+    );
+
+    anchor_spl::token::transfer(cpi_ctx, fee_amount)?;
+
     let transfer_instruction = Transfer{
         from: ctx.accounts.taker_ata_desired.to_account_info(),
         to: ctx.accounts.creator_ata_desired.to_account_info(),
@@ -125,8 +169,8 @@ pub fn close_book_handler(
         ctx.accounts.token_program.to_account_info(),
         transfer_instruction
     );
-
-    anchor_spl::token::transfer(cpi_ctx, book.desired_amount)?;
+    
+    anchor_spl::token::transfer(cpi_ctx, book.desired_amount - fee_amount)?;
 
     Ok(())
 }
