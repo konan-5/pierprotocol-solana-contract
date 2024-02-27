@@ -1,5 +1,5 @@
 use {
-    crate::state::*,
+    crate::{errors::ErrorCode, state::*},
     anchor_lang::prelude::*,
     anchor_spl::token::Mint,
 };
@@ -27,8 +27,12 @@ pub struct UpdateFriendCtx<'info> {
     pub friend: Account<'info, Friend>
 }
 
-pub fn update_friend_handler(ctx: Context<UpdateFriendCtx>, fee_rate: u8) -> Result<()> {
+pub fn update_friend_handler(ctx: Context<UpdateFriendCtx>, decrease_fee_rate: u8) -> Result<()> {
+    // Validate that decrease_fee_rate is within the range 0 to 100
+    if decrease_fee_rate > 100 {
+        return Err(ErrorCode::FeeRateOutOfRange.into());
+    }    
     let friend = &mut ctx.accounts.friend;
-    friend.fee_rate = fee_rate;
+    friend.decrease_fee_rate = decrease_fee_rate;
     Ok(())
 }

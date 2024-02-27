@@ -48,6 +48,6 @@ pub struct Config {
 
 #[account]
 pub struct Friend {
-    pub fee_rate: u8,
+    pub decrease_fee_rate: u8,
     pub bump: u8,
 }

@@ -152,8 +152,8 @@ pub struct InitializeFriendPdaCtx<'info> {
     system_program: Program<'info, System>,
 }
 
-pub fn initialize_friend_handler(ctx: Context<InitializeFriendPdaCtx>, fee_rate: u8) -> Result<()> {
+pub fn initialize_friend_handler(ctx: Context<InitializeFriendPdaCtx>, decrease_fee_rate: u8) -> Result<()> {
     let friend = &mut ctx.accounts.friend;
-    friend.fee_rate = fee_rate;
+    friend.decrease_fee_rate = decrease_fee_rate;
     Ok(())
 }

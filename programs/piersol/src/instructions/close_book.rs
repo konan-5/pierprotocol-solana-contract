@@ -144,7 +144,9 @@ pub fn close_book_handler(
         anchor_spl::token::close_account(cpi_ctx)?;
     }
 
-    let fee_amount: u64 = book.desired_amount * (desired_friend.fee_rate + offered_friend.fee_rate ) as u64 / 100;
+    let fee_amount: u64 = book.desired_amount * 1 / 100;
+    let fee_amount: u64 = fee_amount * (100 - desired_friend.decrease_fee_rate) as u64 / 100;
+    let fee_amount: u64 = fee_amount * (100 - offered_friend.decrease_fee_rate) as u64 / 100;
 
     let transfer_instruction = Transfer{
         from: ctx.accounts.taker_ata_desired.to_account_info(),
