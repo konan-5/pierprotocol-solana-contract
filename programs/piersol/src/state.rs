@@ -13,10 +13,10 @@ pub const ESCROW_SEED: &str = "escrow";
 pub const CONFIG_SEED: &str = "config";
 pub const FEE_SEED: &str = "fee";
 pub const FRIEND_SEED: &str = "friend";
-pub const FEE_SIZE: usize = 8 + 2 * 32;
-pub const BOOK_SIZE: usize = 8 + (4 * 32) + (2 * 8) + (3 * 1);
-pub const CONFIG_SIZE: usize = 8 + 8 + 1;
-pub const FRIEND_SIZE: usize = 8 + 32 + 2 * 1;
+pub const FEE_SIZE: usize = 8 + 2 * 32 + 1;
+pub const BOOK_SIZE: usize = 8 + (4 * 32) + (2 * 8) + (3 * 1) + 8;
+pub const CONFIG_SIZE: usize = 8 + 32 + 8 + 1;
+pub const FRIEND_SIZE: usize = 8 + 2 * 1;
 
 #[account]
 pub struct Book {
