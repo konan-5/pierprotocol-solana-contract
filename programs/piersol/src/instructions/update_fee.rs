@@ -10,10 +10,16 @@ pub struct UpdateFeeCtx<'info> {
     pub creator: Signer<'info>,
 
     #[account(
+        seeds = [CONFIG_SEED.as_bytes()],
+        bump = config.bump
+    )]
+    config: Account<'info, Config>,
+
+    #[account(
         mut,
-        has_one = creator,
         seeds=[FEE_SEED.as_bytes()],
         bump=fee.bump,
+        constraint = config.creator.key() == creator.key(),
     )]
     pub fee: Account<'info, Fee>
 }

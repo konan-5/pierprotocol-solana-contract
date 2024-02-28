@@ -107,10 +107,17 @@ pub struct InitializeFeePdaCtx<'info> {
     creator: Signer<'info>,
 
     #[account(
+        seeds = [CONFIG_SEED.as_bytes()],
+        bump = config.bump
+    )]
+    config: Account<'info, Config>,
+
+    #[account(
         init,
         payer = creator,
         seeds = [FEE_SEED.as_bytes()],
         bump,
+        constraint = config.creator.key() == creator.key(),
         space = FEE_SIZE,
     )]
     fee: Account<'info, Fee>,
@@ -120,7 +127,6 @@ pub struct InitializeFeePdaCtx<'info> {
 
 pub fn initialize_fee_handler(ctx: Context<InitializeFeePdaCtx>, fee_wallet: Pubkey) -> Result<()> {
     let fee = &mut ctx.accounts.fee;
-    fee.creator = ctx.accounts.creator.key();
     fee.wallet = fee_wallet;
     fee.bump = *ctx.bumps.get(FEE_SEED).unwrap();
     Ok(())
