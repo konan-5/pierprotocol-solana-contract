@@ -2,7 +2,7 @@
 seeds = false
 skip-lint = false
 [programs.localnet]
-piersol = "7yFiWmYdF4VesWPgFZvdso2ypCz4BjnuNaajdT9Sme98"
+piersol = "23DXeZpr2ZqvTa2eqFtQmzrv8sm4CG4D5RS8bM5WVQnw"
 
 [registry]
 url = "https://api.apr.dev"

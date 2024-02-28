@@ -4,7 +4,7 @@ pub mod instructions;
 pub mod state;
 pub mod errors;
 
-declare_id!("7yFiWmYdF4VesWPgFZvdso2ypCz4BjnuNaajdT9Sme98");
+declare_id!("23DXeZpr2ZqvTa2eqFtQmzrv8sm4CG4D5RS8bM5WVQnw");
 
 #[program]
 pub mod piersol {
@@ -15,11 +15,11 @@ pub mod piersol {
     }
 
     pub fn initialize_fee(ctx: Context<InitializeFeePdaCtx>, fee_wallet: Pubkey) -> Result<()> {
-        initialize_pdas:: initialize_fee_handler(ctx, fee_wallet)
+        initialize_pdas::initialize_fee_handler(ctx, fee_wallet)
     }
 
     pub fn update_fee(ctx: Context<UpdateFeeCtx>, fee_wallet: Pubkey) -> Result<()> {
-        update_fee:: update_fee_handler(ctx, fee_wallet)
+        update_fee::update_fee_handler(ctx, fee_wallet)
     }
 
     pub fn initialize_book(ctx: Context<InitializeBookPdaCtx>) -> Result<()> {
@@ -27,7 +27,15 @@ pub mod piersol {
     }
 
     pub fn initialize_escrow(ctx: Context<InitializeEscrowPdaCtx>) -> Result<()> {
-        initialize_pdas:: initialize_escrow_handler(ctx)
+        initialize_pdas::initialize_escrow_handler(ctx)
+    }
+
+    pub fn initialize_friend(ctx: Context<InitializeFriendPdaCtx>, decrease_fee_rate: u8) -> Result<()> {
+        initialize_pdas::initialize_friend_handler(ctx, decrease_fee_rate)
+    }
+
+    pub fn update_friend(ctx: Context<UpdateFriendCtx>, decrease_fee_rate: u8) -> Result<()> {
+        update_friend::update_friend_handler(ctx, decrease_fee_rate)
     }
 
     pub fn create_book(ctx: Context<CreateBookCtx>, offered_amount: u64, desired_amount: u64) -> Result<()> {
