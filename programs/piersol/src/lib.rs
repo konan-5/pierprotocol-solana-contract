@@ -4,7 +4,7 @@ pub mod instructions;
 pub mod state;
 pub mod errors;
 
-declare_id!("23DXeZpr2ZqvTa2eqFtQmzrv8sm4CG4D5RS8bM5WVQnw");
+declare_id!("8R7kunebtYZMJJmDwgzQ55Xs49sjRTTANoQqS5AW5xQm");
 
 #[program]
 pub mod piersol {
@@ -48,5 +48,9 @@ pub mod piersol {
 
     pub fn cancel_book(ctx: Context<CancelBookCtx>) -> Result<()> {
         cancel_book::cancel_book_handler(ctx)
+    }
+
+    pub fn collect_fee(ctx: Context<CollectFeeCtx>) -> Result<()> {
+        collect_fee::collect_fee_handler(ctx)
     }
 }

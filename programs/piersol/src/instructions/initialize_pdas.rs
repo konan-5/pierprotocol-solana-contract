@@ -160,6 +160,7 @@ pub struct InitializeFriendPdaCtx<'info> {
 
 pub fn initialize_friend_handler(ctx: Context<InitializeFriendPdaCtx>, decrease_fee_rate: u8) -> Result<()> {
     let friend = &mut ctx.accounts.friend;
+    friend.bump = *ctx.bumps.get(FRIEND_SEED).unwrap();
     friend.decrease_fee_rate = decrease_fee_rate;
     Ok(())
 }

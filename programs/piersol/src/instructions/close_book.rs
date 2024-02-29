@@ -17,28 +17,16 @@ pub struct CloseBookCtx<'info> {
     desired_mint: Account<'info, Mint>,
 
     #[account(
-        seeds = [FEE_SEED.as_bytes()],
-        bump = fee.bump
-    )]
-    fee: Account<'info, Fee>,
-
-    #[account(
         seeds = [FRIEND_SEED.as_bytes(), offered_mint.key().as_ref()],
         bump = offered_friend.bump
     )]
     offered_friend: Account<'info, Friend>,
 
     #[account(
-        mut,
         seeds = [FRIEND_SEED.as_bytes(), desired_mint.key().as_ref()],
         bump = desired_friend.bump
     )]
     desired_friend: Account<'info, Friend>,
-
-    #[account(
-        constraint=fee_ata.owner == fee.wallet,
-    )]
-    fee_ata: Account<'info, TokenAccount>,
 
     #[account(
         mut,
@@ -98,8 +86,6 @@ pub fn close_book_handler(
     let offered_friend = &ctx.accounts.offered_friend;
     let desired_friend = &ctx.accounts.desired_friend;
 
-    let fee_ata = &ctx.accounts.fee_ata;
-
     let book = &mut ctx.accounts.book;
     book.state = BookState::Closed as u8;
     let book_id_bytes = book.id.to_le_bytes();
@@ -147,19 +133,6 @@ pub fn close_book_handler(
     let fee_amount: u64 = book.desired_amount * 1 / 100;
     let fee_amount: u64 = fee_amount * (100 - desired_friend.decrease_fee_rate) as u64 / 100;
     let fee_amount: u64 = fee_amount * (100 - offered_friend.decrease_fee_rate) as u64 / 100;
-
-    let transfer_instruction = Transfer{
-        from: ctx.accounts.taker_ata_desired.to_account_info(),
-        to: fee_ata.to_account_info(),
-        authority: ctx.accounts.taker.to_account_info(),
-    };
-
-    let cpi_ctx = CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
-        transfer_instruction
-    );
-
-    anchor_spl::token::transfer(cpi_ctx, fee_amount)?;
 
     let transfer_instruction = Transfer{
         from: ctx.accounts.taker_ata_desired.to_account_info(),
