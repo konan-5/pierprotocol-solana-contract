@@ -4,7 +4,7 @@ pub mod instructions;
 pub mod state;
 pub mod errors;
 
-declare_id!("8R7kunebtYZMJJmDwgzQ55Xs49sjRTTANoQqS5AW5xQm");
+declare_id!("BMAq1WioNg32LWjmVz9jw84mNDjQVcqVoHdB6rfhygRB");
 
 #[program]
 pub mod piersol {

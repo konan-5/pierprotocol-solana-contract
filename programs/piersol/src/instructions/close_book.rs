@@ -1,7 +1,7 @@
 use {
     crate::{errors::ErrorCode, state::*},
     anchor_lang::prelude::*,
-    anchor_spl::token::{Mint, Token, TokenAccount, Transfer, CloseAccount},
+    anchor_spl::token::{Mint, Token, TokenAccount, Transfer},
 };
 
 #[derive(Accounts)]
@@ -109,30 +109,11 @@ pub fn close_book_handler(
         outer.as_slice(),
     );
 
-    anchor_spl::token::transfer(cpi_ctx, book.offered_amount)?;
-
-    let should_close = {
-        ctx.accounts.escrow.reload()?;
-        ctx.accounts.escrow.amount == 0
-    };
-
-    if should_close {
-        let ca = CloseAccount{
-            account: ctx.accounts.escrow.to_account_info(),
-            destination: ctx.accounts.creator.to_account_info(),
-            authority: book.to_account_info(),
-        };
-        let cpi_ctx = CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
-            ca,
-            outer.as_slice(),
-        );
-        anchor_spl::token::close_account(cpi_ctx)?;
-    }
-
-    let fee_amount: u64 = book.desired_amount * 1 / 100;
+    let fee_amount: u64 = book.offered_amount * 1 / 100;
     let fee_amount: u64 = fee_amount * (100 - desired_friend.decrease_fee_rate) as u64 / 100;
     let fee_amount: u64 = fee_amount * (100 - offered_friend.decrease_fee_rate) as u64 / 100;
+
+    anchor_spl::token::transfer(cpi_ctx, book.offered_amount - fee_amount)?;
 
     let transfer_instruction = Transfer{
         from: ctx.accounts.taker_ata_desired.to_account_info(),
@@ -145,7 +126,7 @@ pub fn close_book_handler(
         transfer_instruction
     );
     
-    anchor_spl::token::transfer(cpi_ctx, book.desired_amount - fee_amount)?;
+    anchor_spl::token::transfer(cpi_ctx, book.desired_amount)?;
 
     Ok(())
 }
